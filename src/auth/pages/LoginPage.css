@@ -1,0 +1,131 @@
+:root {
+  /* Aquí estoy definiendo variables globales que usaré en todo el CSS para facilitar cambios de colores y estilos */
+  --primary-color: #0062cc; /* Este es mi color principal (azul) */
+  --white: #ffffff; /* Este representa el color blanco */
+  --dark: #333333; /* Un tono gris oscuro para texto */
+  --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Sombra suave para dar profundidad */
+  --radius: 12px; /* Radio de bordes redondeados */
+}
+
+body {
+  /* Establezco el fondo general y la fuente del cuerpo del documento */
+  background-color: #f4f6f8; /* Un gris claro que da un fondo limpio */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Elijo una fuente moderna y legible */
+  margin: 0;
+  padding: 0;
+}
+
+.login-container {
+  /* Aquí creo un contenedor flexible para centrar los formularios de login */
+  margin-top: clamp(
+    4rem,
+    15vh,
+    10rem
+  ); /* Le doy un margen superior que se ajusta al tamaño de pantalla */
+  display: flex;
+  justify-content: center; /* Centro el contenido horizontalmente */
+  align-items: center; /* Centro verticalmente si hay espacio */
+  gap: 2rem; /* Dejo espacio entre los formularios */
+  flex-wrap: wrap; /* Permito que los formularios bajen si no hay espacio horizontal */
+  padding: 1rem;
+}
+
+.login-form-1,
+.login-form-2 {
+  /* Estilizo ambos formularios con fondo blanco, sombra y padding adaptable */
+  background-color: var(--white);
+  padding: clamp(2rem, 5vw, 3rem); /* Espaciado interno responsivo */
+  border-radius: var(--radius); /* Bordes redondeados suaves */
+  box-shadow: var(--box-shadow); /* Le aplico la sombra definida */
+  flex: 1 1 300px; /* Hago que el formulario sea flexible con un tamaño mínimo */
+  max-width: 400px;
+  transition: transform 0.3s ease; /* Animo el movimiento al pasar el mouse */
+}
+
+.login-form-1:hover,
+.login-form-2:hover {
+  /* Al pasar el mouse por encima, levanto ligeramente el formulario */
+  transform: translateY(-5px);
+}
+
+.login-form-1 h3,
+.login-form-2 h3 {
+  /* Aplico estilos comunes a los títulos de ambos formularios */
+  text-align: center; /* Centrado */
+  margin-bottom: 1.5rem; /* Espacio debajo del título */
+  font-size: 1.75rem; /* Tamaño de fuente grande para destacar */
+}
+
+.login-form-1 h3 {
+  color: var(--dark); /* Color oscuro para el título del formulario 1 */
+}
+
+.login-form-2 {
+  background-color: var(--primary-color); /* Azul como fondo del formulario 2 */
+  color: var(--white); /* Texto blanco por contraste */
+}
+
+.login-form-2 h3 {
+  color: var(--white); /* Aseguro que el título sea blanco también */
+}
+
+.login-container form {
+  /* Diseño el formulario como columna con espacio entre campos */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btnSubmit {
+  /* Estilo base para todos los botones de envío */
+  padding: 0.75rem 1.25rem; /* Espaciado interno cómodo */
+  border: none; /* Sin borde por defecto */
+  border-radius: 2rem; /* Botón redondeado */
+  font-weight: 600; /* Texto en negrita */
+  cursor: pointer; /* Cambio de cursor para indicar clic */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Animación suave al pasar el mouse */
+}
+
+.login-form-1 .btnSubmit {
+  /* Botón azul con texto blanco en el formulario 1 */
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.login-form-1 .btnSubmit:hover {
+  background-color: #004a99; /* Oscurezco un poco al pasar el mouse */
+}
+
+.login-form-2 .btnSubmit {
+  /* Botón blanco con texto azul en el formulario 2 */
+  background-color: var(--white);
+  color: var(--primary-color);
+}
+
+.login-form-2 .btnSubmit:hover {
+  background-color: #e6e6e6; /* Fondo más gris al pasar el mouse */
+}
+
+.ForgetPwd {
+  /* Estilo base para el enlace de "olvidé mi contraseña" */
+  text-align: center;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease; /* Cambio de color suave al pasar el mouse */
+}
+
+.login-form-2 .ForgetPwd {
+  color: var(--white); /* Enlace blanco en el formulario azul */
+}
+
+.login-form-2 .ForgetPwd:hover {
+  color: #dcdcdc; /* Color más suave al pasar el mouse */
+}
+
+.login-form-1 .ForgetPwd {
+  color: var(--primary-color); /* Enlace azul en el formulario blanco */
+}
+
+.login-form-1 .ForgetPwd:hover {
+  color: #004a99; /* Azul más oscuro al pasar el mouse */
+}
