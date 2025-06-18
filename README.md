@@ -1,38 +1,76 @@
-# React + Vite
+## CalendarApp - React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto es una aplicación de calendario desarrollada con React 18 y Vite, que permite gestionar eventos de manera visual e intuitiva. Utiliza Redux para el manejo del estado, react-big-calendar para la interfaz del calendario y otras herramientas modernas del ecosistema React.
 
-Currently, two official plugins are available:
+## Características principales
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Visualización de eventos por día, semana o mes.
 
-## Expanding the ESLint configuration
+Crear, editar y eliminar eventos en el calendario.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Modal emergente para edición rápida de eventos.
 
-## Requiere boostrap 5.3.6
+Validaciones de formulario con alertas amigables.
 
-font-awesome/6.7.2
+Soporte para múltiples vistas con localización en español.
 
-## Instalación de bigCalendar:
+## Tecnologías usadas
+
+React 18.2.0 (Evita React 19 por incompatibilidades con react-big-calendar)
+
+Vite como empaquetador y servidor de desarrollo
+
+Redux Toolkit + React Redux
+
+React Big Calendar (interfaz de calendario)
+
+date-fns (manejo de fechas)
+
+React Modal (modales de evento)
+
+React Datepicker (selector de fechas)
+
+SweetAlert2 (alertas personalizadas)
+
+Bootstrap 5 + Font Awesome 6 (estilos e íconos)
+
+## Instalación rápida
+
+# Instala dependencias
+
+yarn install # o npm install
+
+# Dependencias necesarias
 
 yarn add react-big-calendar
-usamos la versión date-fns v2 del sitio web https://www.npmjs.com/package/react-big-calendar
-Instalamos las dependencias necesarias
 yarn add date-fns
-Instalamos el modal
 yarn add react-modal
-Cargamos los stilos del modal en el archivo styles.css
-Cargamos el formulario predefinido para el modal
-cargamos el React Date Picker y generar un calendario en cada campo de texto en las fechas por lo que es necesario instalar:
-https://www.npmjs.com/package/react-datepicker
 yarn add react-datepicker
-Utilizamos sweetalert 2
-para el manejo del store utilizamos redux tollkit
-yarn add @reduxjs/toolkit
-yarn add react-redux
+yarn add sweetalert2
+yarn add @reduxjs/toolkit react-redux
 
-## Notas
+## Comandos útiles
 
-Es necesario usar la versión "react": "18.2.0", porque la versión 19 genera incompatibilidad con bigCalentar
+# Servidor de desarrollo
+
+yarn dev
+
+# Compilar para producción
+
+yarn build
+
+## Recomendaciones
+
+Usa Redux DevTools para depuración.
+
+Asegúrate de importar correctamente los estilos de react-modal, react-datepicker y react-big-calendar.
+
+Los eventos se almacenan en el estado global (events) y el evento seleccionado en activeEvent.
+
+## Manejo avanzado de la nueva versión de rutas de React Router V7
+
+## Autor
+
+Manuel Quintero
+
+Basado en el curso de React de cero a experto de Fernando Herrera
