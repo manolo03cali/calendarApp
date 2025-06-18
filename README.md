@@ -73,4 +73,4 @@ Los eventos se almacenan en el estado global (events) y el evento seleccionado e
 
 Manuel Quintero
 
-Basado en el curso de React de cero a experto de Fernando Herrera
+Basado en el curso React de cero a experto de Fernando Herrera
