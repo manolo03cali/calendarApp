@@ -73,7 +73,6 @@ export const useCalendarStore = () => {
   const startLoadingEvents = async () => {
     if (isLoaded) return; // Evito recargar si ya fueron cargados
 
-    console.log("ejecutando startLoadingEvents()");
     try {
       const { data } = await calendarApi.get("/events"); // obtengo los eventos
       const events = convertEventsToDateEvents(data.events); // convierto strings a fechas reales
