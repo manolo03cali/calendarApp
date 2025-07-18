@@ -1,26 +1,25 @@
-// Importo `Navigate` para poder redirigir al usuario a otra ruta si no cumple alguna condición
-// Importo `Outlet` para poder renderizar las rutas hijas dentro de este layout
+// Importo `Navigate` para redirigir al usuario si no está autorizado
+// Importo `Outlet` para renderizar las rutas hijas en este layout
 import { Navigate, Outlet } from "react-router-dom";
 
-// Defino el componente `PrivateLayout`, que me permite proteger rutas privadas (solo accesibles si el usuario está autenticado)
+// Importo mi hook personalizado que accede al estado de autenticación desde Redux
+import { useAuthStore } from "../hooks";
+
+// Defino el componente `PrivateLayout`, que me ayuda a proteger rutas privadas
 export const PrivateLayout = () => {
-  // En una app real, aquí debería obtener el estado de autenticación desde el store de Redux:
-  // const { status } = useSelector((state) => state.auth);
+  // Uso mi hook `useAuthStore` para saber si el usuario está autenticado
+  const { status } = useAuthStore();
 
-  // Por ahora lo tengo fijo como "authenticated" para pruebas
-  const status = "authenticated";
-
-  // Si el estado indica que el usuario NO está autenticado, redirijo al login
+  // Si el usuario no está autenticado, lo redirijo a la página de login
   if (status !== "authenticated") {
-    // Redirijo a /login y uso `replace` para que no se guarde esta redirección en el historial
     return <Navigate to="/login" replace />;
   }
 
-  // Si el usuario está autenticado, entonces muestro el contenido protegido
+  // Si el usuario sí está autenticado, entonces le muestro las rutas hijas (contenido protegido)
   return (
     <>
       <div className="container">
-        {/* `Outlet` se encarga de renderizar la ruta hija actual dentro de este layout */}
+        {/* Outlet representa donde se van a renderizar las rutas hijas definidas en `Routes` */}
         <Outlet />
       </div>
     </>

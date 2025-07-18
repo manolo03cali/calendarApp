@@ -1,18 +1,22 @@
-// Importo `memo` desde React para evitar renderizados innecesarios si las props no cambian
+// Primero importo `memo` desde React.
+// Lo voy a usar para evitar que este componente se renderice otra vez si sus props no han cambiado.
 import { memo } from "react";
 
-// Defino y exporto el componente `CalendarEvent`
-// Uso `memo` para memorizar el componente y que solo se vuelva a renderizar si cambian las props
+// Ahora creo y exporto el componente `CalendarEvent`.
+// Lo encierro en `memo` para que React lo "memorice", es decir, lo recuerde y no lo vuelva a renderizar innecesariamente.
 export const CalendarEvent = memo(({ event }) => {
-  // Extraigo `title` y `user` del objeto `event` que recibo como prop
+  // Desestructuro el objeto `event` que recibo como prop.
+  // Extraigo `title` (el título del evento) y `user` (el usuario que lo creó o al que pertenece).
   const { title, user } = event;
 
+  // Devuelvo el contenido que se va a renderizar en el calendario.
   return (
     <>
-      {/* Muestro el título del evento en negrita */}
+      {/* Muestro el título del evento en negrita usando <strong> */}
       <strong>{title}</strong>
 
-      {/* Muestro el nombre del usuario si está disponible (uso opcional chaining para evitar errores si no hay user) */}
+      {/* Después muestro el nombre del usuario si existe.
+          Uso el operador ?. (optional chaining) para evitar errores si `user` es undefined o null. */}
       <span> - {user?.name}</span>
     </>
   );

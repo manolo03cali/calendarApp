@@ -3,54 +3,98 @@ import { useDispatch, useSelector } from "react-redux";
 
 // Importo las acciones que puedo disparar sobre el slice del calendario
 import {
-  onSetActiveEvent, // Establece un evento como el activo
+  onSetActiveEvent, // Establece un evento como el activo (seleccionado)
   onAddNewEvent, // Agrega un nuevo evento al store
-  onUpdateEvent, // Actualiza un evento existente
-  onDeleteEvent, // Elimina el evento activo
+  onUpdateEvent, // Actualiza un evento existente en el store
+  onDeleteEvent, // Elimina el evento activo del store
+  onLoadEvents, // Carga los eventos desde la base de datos
 } from "../store";
+
+// Importo la API personalizada para hacer peticiones HTTP
+import { calendarApi } from "../api";
+
+// Función auxiliar que convierte las fechas de los eventos a objetos Date reales
+import { convertEventsToDateEvents } from "../helpers";
+
+// Librería externa para mostrar alertas visuales
+import Swal from "sweetalert2";
 
 // Creo un hook personalizado que encapsula toda la lógica relacionada con el calendario
 export const useCalendarStore = () => {
-  // Obtengo la función dispatch de Redux para poder lanzar acciones
+  // Obtengo `dispatch` para poder lanzar acciones a Redux
   const dispatch = useDispatch();
 
-  // Uso useSelector para extraer del estado global los datos del slice "calendar":
-  // - events: todos los eventos guardados
-  // - activeEvent: el evento actualmente seleccionado
-  const { events, activeEvent } = useSelector((state) => state.calendar);
+  // Extraigo datos del estado global: los eventos, el evento activo y si ya cargué los eventos
+  const { events, activeEvent, isLoaded } = useSelector(
+    (state) => state.calendar
+  );
 
-  // Esta función se encarga de marcar un evento como "activo" (por ejemplo, cuando hago clic sobre él)
+  // También necesito acceder al usuario autenticado para asociarlo a los eventos
+  const { user } = useSelector((state) => state.auth);
+
+  // === Función: seleccionar un evento activo ===
+  // Se llama cuando el usuario hace clic en un evento del calendario
   const setActiveEvent = (calendarEvent) => {
     dispatch(onSetActiveEvent(calendarEvent));
   };
 
-  // Esta función decide si debo guardar un nuevo evento o actualizar uno existente
+  // === Función: guardar un evento (nuevo o existente) ===
   const startSavingEvent = async (calendarEvent) => {
-    if (calendarEvent._id) {
-      // Si el evento ya tiene un _id, entonces es uno existente → lo actualizo
-      dispatch(onUpdateEvent({ ...calendarEvent }));
-    } else {
-      // Si no tiene _id, es un evento nuevo → le genero uno y lo agrego
-      dispatch(onAddNewEvent({ ...calendarEvent, _id: new Date().getTime() }));
+    try {
+      // Si el evento ya tiene un id, significa que ya existe → actualizo
+      if (calendarEvent.id) {
+        await calendarApi.put(`/events/${calendarEvent.id}`, calendarEvent);
+        dispatch(onUpdateEvent({ ...calendarEvent, user })); // actualizo con usuario
+        return;
+      }
+
+      // Si no tiene id, entonces es un evento nuevo → lo creo
+      const { data } = await calendarApi.post("/events", calendarEvent);
+      dispatch(onAddNewEvent({ ...calendarEvent, id: data.event.id, user })); // le asigno el id del backend
+    } catch (error) {
+      console.log(error);
+      // Si algo falla, muestro una alerta con el mensaje de error del backend
+      Swal.fire("Error al guardar", error.response.data.msg, "error");
     }
   };
 
-  // Esta función borra el evento actualmente activo
-  const startDeletingEvent = () => {
-    // (En el futuro debería también eliminarlo del backend si se usa API)
-    dispatch(onDeleteEvent());
+  // === Función: eliminar el evento actualmente activo ===
+  const startDeletingEvent = async () => {
+    try {
+      await calendarApi.delete(`/events/${activeEvent.id}`); // envío petición DELETE
+      dispatch(onDeleteEvent()); // y luego actualizo el store
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Error al eliminar", error.response.data.msg, "error");
+    }
   };
 
-  // Devuelvo todas las propiedades y métodos que necesito exponer desde este hook
-  return {
-    // Propiedades del estado
-    events,
-    activeEvent,
-    hasEventSelected: !!activeEvent, // Devuelvo true si hay un evento activo, false si no
+  // === Función: cargar los eventos desde el backend ===
+  const startLoadingEvents = async () => {
+    if (isLoaded) return; // Evito recargar si ya fueron cargados
 
-    // Métodos para manejar eventos
-    setActiveEvent,
-    startSavingEvent,
-    startDeletingEvent,
+    console.log("ejecutando startLoadingEvents()");
+    try {
+      const { data } = await calendarApi.get("/events"); // obtengo los eventos
+      const events = convertEventsToDateEvents(data.events); // convierto strings a fechas reales
+      dispatch(onLoadEvents(events)); // actualizo el estado con los eventos cargados
+    } catch (error) {
+      console.log("Error cargando eventos");
+      console.log(error);
+    }
+  };
+
+  // === Retorno de valores y funciones ===
+  return {
+    // Propiedades del estado del calendario
+    events, // Lista de todos los eventos
+    activeEvent, // Evento actualmente seleccionado
+    hasEventSelected: !!activeEvent, // true si hay evento seleccionado
+
+    // Métodos disponibles para los componentes
+    setActiveEvent, // Seleccionar evento
+    startSavingEvent, // Guardar o actualizar evento
+    startDeletingEvent, // Eliminar evento
+    startLoadingEvents, // Cargar eventos
   };
 };

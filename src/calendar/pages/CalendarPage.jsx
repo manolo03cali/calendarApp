@@ -1,101 +1,117 @@
-// Importo el componente principal `Calendar` desde react-big-calendar
+// Primero importo el componente principal `Calendar` desde la librería react-big-calendar
 import { Calendar } from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css"; // Importo los estilos por defecto del calendario
 
-// Importo los componentes internos de mi app
+// También importo los estilos por defecto que trae la librería para que el calendario se vea bien
+import "react-big-calendar/lib/css/react-big-calendar.css";
+
+// Luego traigo los componentes que he construido para mi aplicación:
 import {
-  CalendarEvent, // Cómo se ve cada evento
-  Navbar, // La barra de navegación superior
-  CalendarModal, // El modal para crear o editar eventos
-  FabAddNew, // Botón flotante para agregar nuevo evento
-  FabDelete, // Botón flotante para eliminar evento
+  CalendarEvent, // Este componente define cómo se verá cada evento dentro del calendario
+  Navbar, // La barra superior de navegación con el nombre del usuario y botón para cerrar sesión
+  CalendarModal, // Modal que uso para crear o editar eventos
+  FabAddNew, // Botón flotante para agregar eventos
+  FabDelete, // Botón flotante para eliminar el evento seleccionado
 } from "../";
 
-// Importo el localizador y los textos en español
+// Importo utilidades para la localización en español y para manejar fechas correctamente
 import { localizer, getMessagesES } from "../../helpers";
 
-// Importo `useState` para manejar estado local
-import { useState } from "react";
+// Uso `useState` para manejar estados locales y `useEffect` para cargar los eventos cuando se monte el componente
+import { useEffect, useState } from "react";
 
-// Importo mis hooks personalizados para acceder al store
-import { useUiStore, useCalendarStore } from "../../hooks";
+// Traigo mis hooks personalizados que me conectan con el store
+import { useUiStore, useCalendarStore, useAuthStore } from "../../hooks";
 
-// Componente principal que renderiza la página del calendario
-export const CalendarPage = (props) => {
-  // Obtengo la función para abrir el modal de fecha
+// Defino el componente principal que renderiza toda la página del calendario
+export const CalendarPage = () => {
+  // Desde el store de autenticación, obtengo el usuario que ha iniciado sesión
+  const { user } = useAuthStore();
+
+  // Desde el store de la interfaz, obtengo la función que abre el modal para agregar o editar eventos
   const { openDateModal } = useUiStore();
 
-  // Obtengo los eventos almacenados en el store y la función para seleccionar uno
-  const { events, setActiveEvent } = useCalendarStore();
+  // Desde el store del calendario, obtengo:
+  // - la lista de eventos
+  // - la función para establecer el evento activo
+  // - y la función para cargar los eventos desde el backend
+  const { events, setActiveEvent, startLoadingEvents } = useCalendarStore();
 
-  // Guardo el último tipo de vista que usó el usuario (semana, mes, día) en el estado
+  // Creo un estado local para guardar la última vista que usó el usuario en el calendario (semana, mes, día)
   const [lastView, setlastView] = useState(
     localStorage.getItem("lastView") || "week"
   );
 
-  // Esta función define el estilo visual de los eventos en el calendario
+  // Esta función decide cómo se verá cada evento visualmente (colores, opacidad, etc.)
   const eventStyleGetter = (event, start, end, isSelected) => {
+    // Verifico si el evento es mío (comparando el usuario actual con el dueño del evento)
+    const isMyEvent =
+      user.uid === event.user._id || user.uid === event.user.uid;
+
+    // Defino los estilos para el evento
     const style = {
-      backgroundColor: "#347CF7", // Color azul de fondo
+      backgroundColor: isMyEvent ? "#347CF7" : "#a640afff", // Azul si es mío, púrpura si no
       borderRadius: "0px", // Bordes rectos
-      opacity: 0.8, // Un poco transparente
+      opacity: 0.8, // Ligera transparencia
       color: "white", // Texto blanco
     };
-    return {
-      style, // Devuelvo un objeto con la propiedad `style` que react-big-calendar va a aplicar
-    };
+
+    // Devuelvo el estilo en el formato que react-big-calendar espera
+    return { style };
   };
 
-  // Esta función se ejecuta cuando hago doble clic sobre un evento
+  // Esta función se ejecuta cuando hago doble clic sobre un evento del calendario
   const onDoubleClick = (event) => {
-    console.log({ doubleClick: event });
-    // Abro el modal para editar o ver detalles del evento
-    openDateModal();
+    console.log({ doubleClick: event }); // Puedo ver en consola cuál evento hice doble clic
+    openDateModal(); // Abro el modal para ver o editar el evento
   };
 
-  // Esta función se ejecuta cuando selecciono un evento (clic sencillo)
+  // Esta función se ejecuta cuando selecciono un evento con un solo clic
   const onSelect = (event) => {
-    // Establezco el evento activo en el store
-    setActiveEvent(event);
+    setActiveEvent(event); // Lo guardo como evento activo en el store
   };
 
-  // Esta función se ejecuta cuando cambio la vista del calendario (semana, mes, etc.)
+  // Esta función se ejecuta cuando el usuario cambia la vista del calendario (semana, mes, día)
   const onViewchanged = (event) => {
-    // Guardo la última vista en localStorage para que se recuerde al recargar
-    localStorage.setItem("lastView", event);
-    setlastView(event);
+    localStorage.setItem("lastView", event); // Guardo la vista en localStorage
+    setlastView(event); // Actualizo el estado local
   };
 
-  // Renderizo todo lo que compone la página del calendario
+  // Este `useEffect` se ejecuta una sola vez al cargar la página
+  // Sirve para cargar todos los eventos desde la base de datos
+  useEffect(() => {
+    startLoadingEvents();
+  }, []);
+
+  // Finalmente, retorno la estructura visual de la página
   return (
     <>
-      {/* Barra de navegación */}
+      {/* Muestro la barra de navegación superior */}
       <Navbar />
 
-      {/* Componente principal del calendario */}
+      {/* Renderizo el calendario con toda su configuración */}
       <Calendar
-        culture="es" // Establezco idioma
-        messages={getMessagesES()} // Traduzco los textos del calendario
-        localizer={localizer} // Le indico cómo manejar las fechas
-        events={events} // Le paso los eventos que tengo guardados
-        defaultView={lastView} // Vista predeterminada (semana, mes, día)
-        startAccessor="start" // Le digo qué propiedad usar para el inicio
-        endAccessor="end" // Le digo qué propiedad usar para el final
-        style={{ height: "calc( 100vh - 80px )" }} // Le doy una altura que ocupe casi toda la pantalla
-        eventPropGetter={eventStyleGetter} // Función que aplica estilos a cada evento
-        components={{ event: CalendarEvent }} // Personalizo cómo se ve cada evento
-        onDoubleClickEvent={onDoubleClick} // Qué pasa al hacer doble clic
-        onSelectEvent={onSelect} // Qué pasa al hacer clic
-        onView={onViewchanged} // Qué pasa al cambiar la vista
+        culture="es" // Le indico que la cultura es español
+        messages={getMessagesES()} // Paso los textos traducidos al español
+        localizer={localizer} // Localizador para fechas, usando date-fns
+        events={events} // Lista de eventos que quiero mostrar
+        defaultView={lastView} // Vista inicial (semana, mes, etc.)
+        startAccessor="start" // Campo para la fecha de inicio del evento
+        endAccessor="end" // Campo para la fecha de fin del evento
+        style={{ height: "calc( 100vh - 80px )" }} // Altura del calendario (100% - navbar)
+        eventPropGetter={eventStyleGetter} // Estilos personalizados para cada evento
+        components={{ event: CalendarEvent }} // Componente personalizado para renderizar eventos
+        onDoubleClickEvent={onDoubleClick} // Evento al hacer doble clic
+        onSelectEvent={onSelect} // Evento al hacer clic
+        onView={onViewchanged} // Evento al cambiar la vista
       />
 
-      {/* Modal para crear o editar eventos */}
+      {/* Modal para agregar o editar un evento */}
       <CalendarModal />
 
-      {/* Botón flotante para eliminar eventos */}
+      {/* Botón flotante para eliminar el evento activo */}
       <FabDelete />
 
-      {/* Botón flotante para agregar nuevos eventos */}
+      {/* Botón flotante para agregar un nuevo evento */}
       <FabAddNew />
     </>
   );

@@ -1,0 +1,97 @@
+:root {
+  --primary-color: #0062cc;
+  --white: #ffffff;
+  --dark: #333333;
+  --gray: #6c757d;
+  --box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  --radius: 16px;
+  --animation-duration: 0.6s;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f8;
+}
+
+.error-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top left, #ffffff, #e9ecef);
+  padding: 2rem;
+  animation: fadeIn var(--animation-duration) ease-out;
+}
+
+.error-content {
+  background-color: var(--white);
+  padding: 3rem 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  transform: translateY(0);
+  animation: slideUp var(--animation-duration) ease-out;
+}
+
+.error-code {
+  font-size: 6rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.error-title {
+  font-size: 2rem;
+  color: var(--dark);
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  font-size: 1.1rem;
+  color: var(--gray);
+  margin-bottom: 2rem;
+}
+
+.btn-return {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 2rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: inline-block;
+}
+
+.btn-return:hover {
+  background-color: #004a99;
+  transform: scale(1.03);
+}
+
+/* Animaciones */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,38 +1,41 @@
-// Importo los hooks de Redux para trabajar con el store
+// Importo los hooks de React-Redux para interactuar con el store de la app
 import { useDispatch, useSelector } from "react-redux";
 
-// Importo las acciones que quiero disparar del slice de UI
+// Importo las acciones que permiten abrir o cerrar el modal desde el slice de UI
 import { onOpenDateModal, onCloseDateModal } from "../store";
 
-// Creo un hook personalizado para encapsular la lógica del UI (interfaz)
+// Creo un custom hook llamado `useUiStore` para manejar la lógica relacionada con la UI (interfaz)
 export const useUiStore = () => {
-  // Obtengo `dispatch` para poder enviar acciones al store
+  // Obtengo `dispatch`, que me permite enviar acciones al store (como abrir/cerrar el modal)
   const dispatch = useDispatch();
 
-  // Extraigo el estado de la interfaz desde el store. En este caso, solo me interesa saber si el modal está abierto
+  // Uso `useSelector` para extraer el valor de `isDateModalOpen` desde el estado global (store)
+  // Esto me dice si el modal actualmente está abierto (true) o cerrado (false)
   const { isDateModalOpen } = useSelector((state) => state.ui);
 
-  // Esta función se encarga de abrir el modal: simplemente lanzo la acción correspondiente
+  // Esta función abre el modal lanzando la acción `onOpenDateModal`
   const openDateModal = () => {
     dispatch(onOpenDateModal());
   };
 
-  // Esta función se encarga de cerrar el modal
+  // Esta función cierra el modal lanzando la acción `onCloseDateModal`
   const closeDateModal = () => {
     dispatch(onCloseDateModal());
   };
 
-  // Esta función es opcional, pero útil: si el modal está abierto, lo cierra; si está cerrado, lo abre
+  // Esta función alterna el estado del modal:
+  // - Si está abierto, lo cierra
+  // - Si está cerrado, lo abre
   const toggleDateModal = () => {
     isDateModalOpen ? openDateModal() : closeDateModal();
   };
 
-  // Devuelvo todo lo que quiero exponer desde este hook
+  // Devuelvo las propiedades y funciones que quiero que estén disponibles al usar este hook
   return {
-    // Propiedad que indica si el modal está abierto o no
+    // Estado del modal (abierto o cerrado)
     isDateModalOpen,
 
-    // Métodos para abrir, cerrar o alternar el estado del modal
+    // Métodos para controlar el modal
     openDateModal,
     closeDateModal,
     toggleDateModal,

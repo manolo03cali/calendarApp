@@ -1,30 +1,30 @@
-// Importo React y hooks necesarios para estado, efecto y optimización de valores
+// Primero importo los hooks que necesito desde React para manejar estados, efectos y optimizar cálculos
 import { useEffect, useMemo, useState } from "react";
 
-// Importo el componente Modal para mostrar el formulario emergente
+// Luego importo el componente Modal, que usaré para mostrar el formulario como ventana emergente
 import Modal from "react-modal";
 
-// Importo el selector de fechas y el registro de idioma
+// Traigo el selector de fechas junto con su configuración de idioma
 import DatePicker, { registerLocale } from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css"; // Estilos del selector de fecha
+import "react-datepicker/dist/react-datepicker.css"; // Importo los estilos CSS necesarios
 
-// Importo funciones útiles de manejo de fechas
-import { addHours, differenceInSeconds, isDate } from "date-fns";
+// Utilizo funciones de date-fns para manejar fechas fácilmente
+import { addHours, differenceInSeconds } from "date-fns";
 
-// Importo el idioma español para usar en el DatePicker
+// Importo el idioma español para que el DatePicker muestre los textos en español
 import es from "date-fns/locale/es";
 
-// Importo SweetAlert2 para mostrar alertas amigables al usuario
+// Para mostrar alertas agradables al usuario, uso SweetAlert2
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 
-// Importo mis hooks personalizados para manejar la UI y el calendario
+// Importo mis hooks personalizados que me dan acceso a la UI y al estado del calendario
 import { useUiStore, useCalendarStore } from "../../hooks";
 
-// Registro el idioma español para los calendarios
+// Registro el idioma español para el DatePicker
 registerLocale("es", es);
 
-// Defino estilos personalizados para el modal (centrado en pantalla)
+// Defino los estilos que quiero para el modal (lo centro en la pantalla)
 const customStyles = {
   content: {
     top: "50%",
@@ -36,37 +36,36 @@ const customStyles = {
   },
 };
 
-// Establezco cuál es el elemento raíz para el modal
+// Le indico a React Modal cuál es el elemento raíz de mi app
 Modal.setAppElement("#root");
 
 export const CalendarModal = () => {
-  // Accedo al estado del modal de fecha (si está abierto o no), y a la función para cerrarlo
+  // Con este hook puedo saber si el modal está abierto y puedo cerrarlo desde aquí
   const { isDateModalOpen, closeDateModal } = useUiStore();
 
-  // Obtengo el evento activo (si estoy editando uno) y la función para guardar (crear o actualizar)
+  // Este hook me da acceso al evento que estoy editando (si hay alguno), y una función para guardar eventos
   const { activeEvent, startSavingEvent } = useCalendarStore();
 
-  // Estado local para saber si ya intenté enviar el formulario (para validaciones visuales)
+  // Creo un estado local para saber si ya intenté enviar el formulario, útil para mostrar errores
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Estado local que contiene los valores del formulario
+  // Defino el estado inicial del formulario, con valores por defecto
   const [formValues, setFormValues] = useState({
     title: "Manuel",
     notes: "Nota de Manuel",
-    start: new Date(), // fecha inicial por defecto: ahora
+    start: new Date(), // fecha de inicio: ahora
     end: addHours(new Date(), 2), // fecha final: dos horas después
   });
 
-  // Calculo dinámicamente la clase del campo título para validación visual
+  // Este memo me permite validar el campo título solo cuando sea necesario
   const titleClass = useMemo(() => {
-    if (!formSubmitted) return ""; // no marco error si aún no se envió
-    return formValues.title.length > 0 ? "is-valid" : "is-invalid"; // clase según longitud del título
+    if (!formSubmitted) return "";
+    return formValues.title.length > 0 ? "is-valid" : "is-invalid";
   }, [formValues.title, formSubmitted]);
 
-  // Cada vez que `activeEvent` cambie (por ejemplo, al hacer clic en un evento), actualizo los valores del formulario
+  // Cuando hay un evento activo (es decir, voy a editar uno), cargo sus datos en el formulario
   useEffect(() => {
     if (typeof activeEvent === "object" && activeEvent !== null) {
-      // Relleno el formulario con los valores del evento activo
       setFormValues({
         ...activeEvent,
         start: new Date(activeEvent.start),
@@ -75,7 +74,7 @@ export const CalendarModal = () => {
     }
   }, [activeEvent]);
 
-  // Función que actualiza el formulario cuando escribo en un input o textarea
+  // Esta función se encarga de actualizar los inputs del formulario
   const onInputChange = ({ target }) => {
     setFormValues({
       ...formValues,
@@ -83,7 +82,7 @@ export const CalendarModal = () => {
     });
   };
 
-  // Función para cambiar la fecha de inicio o fin
+  // Esta función cambia las fechas de inicio o fin
   const onDateChange = (event, changing) => {
     setFormValues({
       ...formValues,
@@ -91,84 +90,73 @@ export const CalendarModal = () => {
     });
   };
 
-  // Cierro el modal cuando se cancela o termina el guardado
+  // Esta función se llama cuando el usuario cierra el modal
   const onCloseModal = () => {
     closeDateModal();
   };
 
-  // Lógica cuando el usuario envía el formulario
+  // Esta es la función principal para cuando el usuario envía el formulario
   const onSubmit = async (event) => {
-    event.preventDefault(); // Evito recargar la página
-    setFormSubmitted(true); // Indico que ya intenté enviar, para que se activen validaciones visuales
+    event.preventDefault();
+    setFormSubmitted(true);
 
-    // Validación: la fecha de inicio debe ser válida
+    // Valido que la fecha de inicio sea válida
     if (!formValues.start || isNaN(new Date(formValues.start).getTime())) {
-      Swal.fire({
-        title: "Fecha de inicio inválida",
-        text: "Debes ingresar una fecha y hora de inicio válida",
-        icon: "error",
-      });
+      Swal.fire(
+        "Fecha de inicio inválida",
+        "Debes ingresar una fecha y hora de inicio válida",
+        "error"
+      );
       return;
     }
 
-    // Validación: la fecha de fin debe ser válida
+    // Valido que la fecha de fin también sea válida
     if (!formValues.end || isNaN(new Date(formValues.end).getTime())) {
-      Swal.fire({
-        title: "Fecha de fin inválida",
-        text: "Debes ingresar una fecha y hora de fin válida",
-        icon: "error",
-      });
+      Swal.fire(
+        "Fecha de fin inválida",
+        "Debes ingresar una fecha y hora de fin válida",
+        "error"
+      );
       return;
     }
 
-    // Validación: la fecha de fin debe ser posterior a la de inicio
+    // Me aseguro de que la fecha de fin sea posterior a la de inicio
     const diference = differenceInSeconds(formValues.end, formValues.start);
     if (isNaN(diference) || diference <= 0) {
-      Swal.fire({
-        title: "Fechas incorrectas",
-        text: "Revisar las fechas ingresadas",
-        icon: "error",
-      });
+      Swal.fire("Fechas incorrectas", "Revisar las fechas ingresadas", "error");
       return;
     }
 
-    // Validación: el título debe tener al menos 2 caracteres
+    // Verifico que el título tenga al menos dos caracteres
     if (formValues.title.trim().length < 2) {
-      Swal.fire({
-        title: "Titulo obligatorio",
-        text: "Debe ingresar el titulo del evento",
-        icon: "error",
-      });
+      Swal.fire(
+        "Título obligatorio",
+        "Debe ingresar el título del evento",
+        "error"
+      );
       return;
     }
 
-    // Si todo está bien, llamo a la función para guardar (crear o actualizar el evento)
+    // Si todo está correcto, guardo el evento (nuevo o editado)
     await startSavingEvent(formValues);
-
-    // Cierro el modal
-    onCloseModal();
-
-    // Restablezco validaciones visuales
-    setFormSubmitted(false);
-
-    // Para depuración, imprimo el evento en consola
-    console.log("Formulario enviado", formValues);
+    onCloseModal(); // Cierro el modal
+    setFormSubmitted(false); // Reseteo validación
   };
 
-  // Aquí empieza la parte visual del modal
+  // Aquí devuelvo el JSX que muestra el modal con el formulario
   return (
     <Modal
-      isOpen={isDateModalOpen} // Se muestra solo si el modal debe estar abierto
-      onRequestClose={onCloseModal} // Qué hacer si se cierra
-      style={customStyles} // Estilos definidos arriba
+      isOpen={isDateModalOpen}
+      onRequestClose={onCloseModal}
+      style={customStyles}
       className="modal"
       overlayClassName="modal-fondo"
-      closeTimeoutMS={200} // Espera 200ms antes de cerrar para aplicar animación
+      closeTimeoutMS={200}
     >
       <h1> Nuevo evento </h1>
       <hr />
       <form className="container" onSubmit={onSubmit}>
-        {/* Selector de fecha/hora de inicio */}
+        {/* Fecha de inicio */}
         <div className="form-group mb-2 d-flex flex-column">
           <label>Fecha y hora inicio</label>
           <DatePicker
@@ -182,7 +170,7 @@ export const CalendarModal = () => {
           />
         </div>
 
-        {/* Selector de fecha/hora de fin */}
+        {/* Fecha de fin */}
         <div className="form-group mb-2 d-flex flex-column">
           <label>Fecha y hora fin</label>
           <DatePicker
@@ -199,12 +187,12 @@ export const CalendarModal = () => {
 
         <hr />
 
-        {/* Campo de texto para el título del evento */}
+        {/* Campo título */}
         <div className="form-group mb-2">
-          <label>Titulo y notas</label>
+          <label>Título y notas</label>
           <input
             type="text"
-            className={`form-control ${titleClass}`} // Aplica clase según validación
+            className={`form-control ${titleClass}`}
             placeholder="Título del evento"
             name="title"
             autoComplete="off"
@@ -214,10 +202,9 @@ export const CalendarModal = () => {
           <small className="form-text text-muted">Una descripción corta</small>
         </div>
 
-        {/* Campo de texto para las notas del evento */}
+        {/* Campo notas */}
         <div className="form-group mb-2">
           <textarea
-            type="text"
             className="form-control"
             placeholder="Notas"
             rows="5"
@@ -228,7 +215,7 @@ export const CalendarModal = () => {
           <small className="form-text text-muted">Información adicional</small>
         </div>
 
-        {/* Botón de enviar/guardar */}
+        {/* Botón guardar */}
         <button type="submit" className="btn btn-outline-primary btn-block">
           <i className="far fa-save"></i>
           <span> Guardar</span>

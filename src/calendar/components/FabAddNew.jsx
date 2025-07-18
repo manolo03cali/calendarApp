@@ -1,42 +1,43 @@
-// Importo la función `addHours` para sumar horas a una fecha
+// Importo la función `addHours` desde date-fns, que me permite sumar horas fácilmente a una fecha
 import { addHours } from "date-fns";
 
-// Importo mis hooks personalizados que me permiten acceder al store de calendario y UI
+// Importo mis hooks personalizados para acceder al estado global del calendario y la interfaz de usuario
 import { useCalendarStore, useUiStore } from "../../hooks";
 
-// Defino el botón flotante para agregar un nuevo evento al calendario
+// Defino y exporto el componente `FabAddNew`, que representa el botón flotante para crear un nuevo evento
 export const FabAddNew = () => {
-  // Desde el store de la UI, obtengo la función que abre el modal de fecha
+  // Desde el store de la interfaz (`UI`), obtengo la función `openDateModal`, que me permite abrir el modal de creación de eventos
   const { openDateModal } = useUiStore();
 
-  // Desde el store del calendario, obtengo la función que establece el evento activo
+  // Desde el store del calendario obtengo la función `setActiveEvent`, que me permite establecer el evento que está activo
   const { setActiveEvent } = useCalendarStore();
 
-  // Esta función se ejecuta cuando el usuario hace clic en el botón "+"
+  // Esta función la ejecuto cuando el usuario hace clic en el botón con el signo "+"
   const handleClick = () => {
-    // Primero, reseteo cualquier evento que estuviera seleccionado
-    // y defino un nuevo evento vacío con valores por defecto
+    // Primero, preparo un nuevo objeto de evento vacío (o sea, limpio cualquier evento que estuviera seleccionado antes)
     setActiveEvent({
-      title: "", // Título vacío
-      notes: "", // Notas vacías
-      start: new Date(), // Fecha de inicio: ahora
-      end: addHours(new Date(), 2), // Fecha de fin: 2 horas después
-      bgColor: "#fafafa", // Color de fondo por defecto
+      title: "", // El título empieza vacío
+      notes: "", // Las notas también
+      start: new Date(), // La fecha de inicio es la hora actual
+      end: addHours(new Date(), 2), // La fecha de fin es dos horas después de ahora
+      bgColor: "#fafafa", // Color de fondo predeterminado
       user: {
-        _id: "123", // ID de usuario quemado (en pruebas)
-        name: "Manuel", // Nombre del usuario
+        _id: "123", // Uso un ID de usuario de prueba por ahora
+        name: "Manuel", // También pongo un nombre por defecto
       },
-      allDay: false, // No es un evento de todo el día
+      allDay: false, // Este evento no dura todo el día
     });
 
-    // Luego abro el modal para que el usuario pueda llenar los datos del nuevo evento
+    // Después de establecer el nuevo evento activo, abro el modal para que el usuario lo edite o complete
     openDateModal();
   };
 
-  // Renderizo el botón flotante azul con el ícono "+"
+  // Finalmente, devuelvo el botón flotante en pantalla, con un ícono de "+".
+  // Este botón aparece como un círculo azul (gracias a la clase `fab` definida en CSS)
   return (
     <button className="btn btn-primary fab" onClick={handleClick}>
-      <i className="fas fa-plus"></i> {/* Ícono de suma */}
+      <i className="fas fa-plus"></i>{" "}
+      {/* Ícono de suma que indica que se puede agregar algo nuevo */}
     </button>
   );
 };

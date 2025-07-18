@@ -1,23 +1,24 @@
-// Primero importo el layout raíz de mi aplicación, que probablemente maneja la lógica de autenticación,
-// como verificar si el usuario está logueado, mostrar un loader mientras se valida, y luego permitir el acceso a las rutas.
+// Importo el layout principal de la aplicación. Este se encarga de validar si el usuario está autenticado.
+// Si el estado de autenticación está en "checking", muestra un loader. Si está autenticado, continúa con la navegación.
 import { RootLayout } from "../layouts";
 
-// Luego importo las rutas privadas, que están destinadas a usuarios autenticados
-// (por ejemplo, dashboard, perfil, etc.).
+// Importo las rutas privadas. Estas rutas solo deben ser accesibles por usuarios autenticados.
+// Ejemplos típicos: calendario, perfil, dashboard, etc.
 import { privateRoutes } from "./privateRoutes";
 
-// También importo las rutas públicas, como login o registro, que no requieren autenticación.
+// Importo las rutas públicas. Estas están disponibles para cualquier usuario, autenticado o no.
+// Ejemplos típicos: /login, /register.
 import { publicRoutes } from "./publicRoutes";
 
-// Ahora defino todas las rutas principales de la app.
-// Le indico que la ruta raíz `/` va a usar el `RootLayout`, que envolverá a todas las rutas hijas.
+// Defino un arreglo con todas las rutas principales de la aplicación.
+// Aquí establezco que la ruta raíz "/" usará el componente RootLayout como envoltorio general.
 export const appRouteDefinitions = [
   {
-    path: "/", // Esto representa la raíz del sitio
-    element: <RootLayout />, // Aquí uso el layout raíz como contenedor principal
+    path: "/", // Esta es la ruta base del sitio, es decir, el dominio raíz
+    element: <RootLayout />, // Uso el RootLayout como componente padre. Dentro de él se renderizarán sus rutas hijas.
     children: [
-      // Combino (spread) todas las rutas públicas y privadas bajo este layout.
-      // De esta manera, `RootLayout` podrá decidir qué mostrar dependiendo del estado de autenticación.
+      // Aquí uno (con spread operator ...) las rutas públicas y privadas en una sola lista.
+      // Esto permite que RootLayout determine qué rutas renderizar dependiendo del estado de autenticación del usuario.
       ...publicRoutes,
       ...privateRoutes,
     ],

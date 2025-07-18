@@ -1,21 +1,28 @@
-// Importo el componente CheckingAuth, que muestra un indicador mientras verifico el estado de autenticación
-//import { CheckingAuth } from "../ui";
-// Importo Outlet para renderizar las rutas hijas definidas en el router
+// Importo `useEffect` para ejecutar un efecto cuando el componente se monta
+import { useEffect } from "react";
+
+// Importo `Outlet` para renderizar rutas hijas dentro del layout
 import { Outlet } from "react-router-dom";
-// Importo un hook personalizado que verifica el estado de autenticación
-//import { useCheckAuth } from "../hooks";
 
-// Defino el componente RootLayout, que maneja la estructura raíz de mi aplicación
+// Importo mi hook personalizado que maneja el estado de autenticación
+import { useAuthStore } from "../hooks";
+
+// Defino el componente RootLayout
 export const RootLayout = () => {
-  // Uso el hook useCheckAuth para obtener el estado actual de autenticación (loading, authenticated, etc.)
-  //const { status } = useCheckAuth();
+  // Extraigo el estado de autenticación y la función que verifica el token
+  const { status, checkAuthToken } = useAuthStore();
 
-  // Mientras el estado sea "checking" (es decir, mientras verifico si el usuario está autenticado)
-  // muestro el componente CheckingAuth, que puede ser un spinner o indicador de carga
-  // if (status === "checking") {
-  //   return <CheckingAuth />;
-  // }
+  // Cuando el componente se monta por primera vez, ejecuto `checkAuthToken`
+  // Esto sirve para revisar si hay un token en localStorage y validar la sesión del usuario
+  useEffect(() => {
+    checkAuthToken();
+  }, []); // El arreglo vacío hace que esto solo se ejecute una vez (al montar)
 
-  // Cuando ya sé el estado (no está en proceso de verificación), renderizo las rutas hijas con Outlet
+  // Si la verificación aún está en proceso, muestro un mensaje de "Cargando..."
+  if (status === "checking") {
+    return <h3>Cargando...</h3>;
+  }
+
+  // Si ya se verificó el estado de autenticación, renderizo las rutas hijas
   return <Outlet />;
 };

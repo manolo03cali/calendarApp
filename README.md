@@ -71,6 +71,13 @@ Los eventos se almacenan en el estado global (events) y el evento seleccionado e
 
 ## Autor
 
-Manuel Quintero
+Jose Manuel Quintero Ferreira
 
-Basado en el curso React de cero a experto de Fernando Herrera
+# Development pasos
+
+1. Renombrar el archivo .env.template por .env
+2. Hacer los cambios respectivos.
+
+VITE_API_URL=VITE_API_URL= HTTP://localhost:4000/api
+
+# yarn add axios
