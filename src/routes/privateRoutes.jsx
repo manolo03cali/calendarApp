@@ -26,7 +26,7 @@ export const privateRoutes = [
 
       // Esta ruta captura cualquier otra ruta no definida dentro del contexto privado (usando el comodín "*").
       // Si alguien escribe mal una URL o accede a una ruta inexistente, muestro la página de error.
-      { path: "*", element: <ErrorPage /> },
+      { path: "*", element: <CalendarPage /> },
     ],
   },
 ];

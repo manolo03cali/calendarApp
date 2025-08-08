@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Pruebas en las rutas privadas Debe mostrar CalendarPage si el usuario está autenticado 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <h1>
+      MockCalendarPage
+    </h1>
+  </div>
+</div>
+`;

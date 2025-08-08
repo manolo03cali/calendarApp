@@ -17,7 +17,7 @@ export const CalendarEvent = memo(({ event }) => {
 
       {/* Después muestro el nombre del usuario si existe.
           Uso el operador ?. (optional chaining) para evitar errores si `user` es undefined o null. */}
-      <span> - {user?.name}</span>
+      {user?.name && <span> - {user?.name}</span>}
     </>
   );
 });

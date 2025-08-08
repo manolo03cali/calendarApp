@@ -81,3 +81,37 @@ Jose Manuel Quintero Ferreira
 VITE_API_URL=VITE_API_URL= HTTP://localhost:4000/api
 
 # yarn add axios
+
+# pruebas
+
+Es necesario instalar
+yarn add --dev jest babel-jest @babel/preset-env @babel/preset-react
+yarn add --dev @testing-library/react @types/jest jest-environment-jsdom
+
+yarn add -D dotenv
+
+Actualizar los scripts del **package.json**
+
+```
+"scripts: {
+  ...
+  "test": "jest --watchAll"
+```
+
+# A partir de ciertas versiones, @testing-library/react no incluye automáticamente @testing-library/dom como dependencia directa (puede estar como peerDependency), por lo que se necesita instalarla manualmente, ademas puedo hacer matchers como toBeInTheDocument() etc
+
+yarn add --dev @testing-library/dom
+
+# Ojo tener en cuanta la configuración de polyfills e importar con require("@testing-library/jest-dom") en jest.setup para poder usar los matchers, cuidado con la secuencia, primero la importación luego todo lo demas.
+
+# Para pruebas con el nuevo enrutamiento se debe instalar node-fetch
+
+<!-- necesario para el manejo de errores en enrutamiento.
+
+npm install --save-dev node-fetch -->
+
+# Otra alternativa a fireEvent es usar userEvent que nos proporciona un comportamimento mas real de usuario.
+
+Debemos instalar la libreria:
+yarn add --dev @testing-library/user-event
+La usamos en el test del CalendarModal.

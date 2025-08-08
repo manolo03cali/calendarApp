@@ -27,7 +27,7 @@ export const useUiStore = () => {
   // - Si está abierto, lo cierra
   // - Si está cerrado, lo abre
   const toggleDateModal = () => {
-    isDateModalOpen ? openDateModal() : closeDateModal();
+    isDateModalOpen ? closeDateModal() : openDateModal();
   };
 
   // Devuelvo las propiedades y funciones que quiero que estén disponibles al usar este hook

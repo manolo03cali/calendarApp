@@ -30,6 +30,7 @@ export const FabDelete = () => {
   // Solo lo muestro si hay un evento seleccionado (usando style.display)
   return (
     <button
+      aria-label="btn-delete"
       className="btn btn-danger fab-danger" // Le aplico las clases para estilos (por ejemplo, posición fija en pantalla)
       onClick={handleClick} // Le asigno la función que se ejecuta al hacer clic
       style={{ display: hasEventSelected ? "" : "none" }} // Solo lo muestro si hay un evento seleccionado

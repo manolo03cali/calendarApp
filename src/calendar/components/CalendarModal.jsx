@@ -20,6 +20,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
 
 // Importo mis hooks personalizados que me dan acceso a la UI y al estado del calendario
 import { useUiStore, useCalendarStore } from "../../hooks";
+import { getEnvVariables } from "../../helpers";
 
 // Registro el idioma español para el DatePicker
 registerLocale("es", es);
@@ -35,9 +36,10 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
   },
 };
-
-// Le indico a React Modal cuál es el elemento raíz de mi app
-Modal.setAppElement("#root");
+if (getEnvVariables().VITE_NODE !== "test") {
+  // Le indico a React Modal cuál es el elemento raíz de mi app
+  Modal.setAppElement("#root");
+}
 
 export const CalendarModal = () => {
   // Con este hook puedo saber si el modal está abierto y puedo cerrarlo desde aquí
@@ -98,6 +100,7 @@ export const CalendarModal = () => {
   // Esta es la función principal para cuando el usuario envía el formulario
   const onSubmit = async (event) => {
     event.preventDefault();
+
     setFormSubmitted(true);
 
     // Valido que la fecha de inicio sea válida

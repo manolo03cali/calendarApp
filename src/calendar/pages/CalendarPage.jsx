@@ -87,7 +87,7 @@ export const CalendarPage = () => {
     <>
       {/* Muestro la barra de navegación superior */}
       <Navbar />
-
+      <h1>CalendarPage</h1>
       {/* Renderizo el calendario con toda su configuración */}
       <Calendar
         culture="es" // Le indico que la cultura es español
